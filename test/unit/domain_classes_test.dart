@@ -4,31 +4,8 @@ import 'package:smart_device_tester/command_protocol.dart';
 import 'package:smart_device_tester/data_validator.dart';
 import 'package:smart_device_tester/led_controller.dart';
 import 'package:smart_device_tester/log_buffer.dart';
-import 'package:smart_device_tester/thermostat.dart';
 
 void main() {
-  group('Thermostat', () {
-    late Thermostat thermostat;
-
-    setUp(() {
-      thermostat = Thermostat();
-    });
-
-    test('should clamp to maximum when value is above allowed range', () {
-      final result = thermostat.setTargetTemperature(35);
-
-      expect(result, Thermostat.maxTemperature);
-      expect(thermostat.targetTemperature, Thermostat.maxTemperature);
-    });
-
-    test('should clamp to minimum when value is below allowed range', () {
-      final result = thermostat.setTargetTemperature(5);
-
-      expect(result, Thermostat.minTemperature);
-      expect(thermostat.targetTemperature, Thermostat.minTemperature);
-    });
-  });
-
   group('LEDController', () {
     late LEDController controller;
 

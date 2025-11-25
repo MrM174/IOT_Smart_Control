@@ -1,114 +1,81 @@
 import 'package:flutter/material.dart';
-import '../thermostat.dart';
-import '../sensor_interface.dart';
+import 'package:smart_device_tester/thermostat.dart';
 
 class TemperatureSlider extends StatefulWidget {
   const TemperatureSlider({
     super.key,
     required this.thermostat,
-    this.sensor,
+    this.onTemperatureChanged,
   });
 
   final Thermostat thermostat;
-  final SensorInterface? sensor;
+  final ValueChanged<double>? onTemperatureChanged;
 
   @override
   State<TemperatureSlider> createState() => _TemperatureSliderState();
 }
 
 class _TemperatureSliderState extends State<TemperatureSlider> {
-  double _sliderValue = 20.0;
-  double? _currentReading;
-  bool _isLoading = false;
-  String? _errorMessage;
+  late double _currentValue;
 
   @override
   void initState() {
     super.initState();
-    _sliderValue = widget.thermostat.targetTemperature;
-    _loadCurrentTemperature();
-  }
-
-  Future<void> _loadCurrentTemperature() async {
-    if (widget.sensor == null) return;
-
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
-
-    try {
-      final reading = await widget.thermostat.checkCurrentTemperature(
-        widget.sensor!,
-      );
-      setState(() {
-        _currentReading = reading;
-        _isLoading = false;
-        // Si el valor es 0.0, significa que hubo un error (valor seguro)
-        if (reading == 0.0) {
-          _errorMessage = 'Error al leer sensor';
-        } else {
-          _errorMessage = null;
-        }
-      });
-    } catch (e) {
-      setState(() {
-        _currentReading = 0.0;
-        _errorMessage = 'Error al leer sensor';
-        _isLoading = false;
-      });
-    }
-  }
-
-  void _onSliderChanged(double value) {
-    setState(() {
-      _sliderValue = value;
-    });
-    widget.thermostat.setTargetTemperature(value);
+    _currentValue = widget.thermostat.targetTemperature;
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          'Temperatura Objetivo: ${_sliderValue.toStringAsFixed(1)}°C',
-          style: Theme.of(context).textTheme.titleLarge,
+          'Temperatura: ${_currentValue.toStringAsFixed(1)}°C',
+          style: Theme.of(context).textTheme.headlineMedium,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
         Slider(
-          value: _sliderValue,
+          value: _currentValue,
           min: Thermostat.minTemperature,
           max: Thermostat.maxTemperature,
           divisions: 30,
-          label: '${_sliderValue.toStringAsFixed(1)}°C',
-          onChanged: _onSliderChanged,
+          label: '${_currentValue.toStringAsFixed(1)}°C',
+          onChanged: (double value) {
+            setState(() {
+              _currentValue = value;
+              widget.thermostat.setTargetTemperature(value);
+              widget.onTemperatureChanged?.call(value);
+            });
+          },
         ),
-        if (_isLoading)
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: CircularProgressIndicator(),
-          ),
-        if (_currentReading != null && !_isLoading)
-          Text(
-            'Temperatura Actual: ${_currentReading!.toStringAsFixed(1)}°C',
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-        if (_errorMessage != null)
-          Text(
-            _errorMessage!,
-            style: TextStyle(
-              color: Colors.red,
-              fontSize: 12,
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              widget.thermostat.isHeating
+                  ? Icons.thermostat
+                  : widget.thermostat.isCooling
+                      ? Icons.ac_unit
+                      : Icons.check_circle,
+              color: widget.thermostat.isHeating
+                  ? Colors.red
+                  : widget.thermostat.isCooling
+                      ? Colors.blue
+                      : Colors.green,
             ),
-          ),
-        ElevatedButton(
-          onPressed: _loadCurrentTemperature,
-          child: const Text('Actualizar Temperatura'),
+            const SizedBox(width: 8),
+            Text(
+              widget.thermostat.isHeating
+                  ? 'Calentando'
+                  : widget.thermostat.isCooling
+                      ? 'Enfriando'
+                      : 'Estable',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          ],
         ),
       ],
     );
   }
 }
-
