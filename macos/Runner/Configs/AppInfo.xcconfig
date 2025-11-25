@@ -5,10 +5,10 @@
 // 'flutter create' template.
 
 // The application's name. By default this is also the title of the Flutter window.
-PRODUCT_NAME = iot_app
+PRODUCT_NAME = smart_device_tester
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.example.iotApp
+PRODUCT_BUNDLE_IDENTIFIER = com.example.smartDeviceTester
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2025 com.example. All rights reserved.

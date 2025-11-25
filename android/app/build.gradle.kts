@@ -6,8 +6,8 @@ plugins {
 }
 
 android {
-    namespace = "com.example.iot_app"
-    compileSdk = 34
+    namespace = "com.example.smart_device_tester"
+    compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.iot_app"
+        applicationId = "com.example.smart_device_tester"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

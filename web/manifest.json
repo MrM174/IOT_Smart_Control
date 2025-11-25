@@ -1,6 +1,6 @@
 {
-    "name": "iot_app",
-    "short_name": "iot_app",
+    "name": "smart_device_tester",
+    "short_name": "smart_device_tester",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
